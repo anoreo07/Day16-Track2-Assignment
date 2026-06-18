@@ -149,21 +149,8 @@ resource "random_id" "id" {
   byte_length = 4
 }
 
-data "aws_ami" "ubuntu" {
-  most_recent = true
-  owners      = ["099720109477"] # Canonical
-  filter {
-    name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"]
-  }
-  filter {
-    name   = "virtualization-type"
-    values = ["hvm"]
-  }
-}
-
 resource "aws_instance" "bastion" {
-  ami                         = data.aws_ami.ubuntu.id
+  ami                         = "ami-03d84abcde942cf8c"
   instance_type               = "t3.micro"
   subnet_id                   = aws_subnet.public[0].id
   vpc_security_group_ids      = [aws_security_group.bastion_sg.id]
@@ -206,7 +193,7 @@ resource "aws_iam_instance_profile" "ai_profile" {
 
 resource "aws_instance" "gpu_node" {
   ami                    = data.aws_ami.deep_learning.id
-  instance_type          = "g4dn.xlarge" 
+  instance_type          = "t3.micro"
   subnet_id              = aws_subnet.private[0].id
   vpc_security_group_ids = [aws_security_group.gpu_sg.id]
   key_name               = aws_key_pair.lab_key.key_name
